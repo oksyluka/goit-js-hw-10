@@ -9,6 +9,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-color: #fafafa;
   color: #212121;
+  font-size: 14px;
   line-height: 1.5;
 }
 
@@ -17,4 +18,28 @@ body {
   padding: 8px;
   max-width: 320px;
   margin-bottom: 16px;
+}
+
+.input {
+  display: block;
+  margin: 50px auto;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+li {
+  margin-bottom: 10px;
+}
+.country-item {
+  display: flex;
+}
+.country-name {
+  margin-left: 20px;
+  font-weight: bold;
+}
+.feature {
+  font-weight: bold;
 }
