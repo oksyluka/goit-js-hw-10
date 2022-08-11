@@ -16,39 +16,46 @@ function onInputChange() {
   countryInfo.innerHTML = '';
   if (isFilled) {
     fetchCountries(isFilled)
-      .then(dataProcessing)
+      .then(data => {
+        if (data.length > 10) {
+          Notify.info(
+            'Too many matches found. Please enter a more specific name.'
+          );
+          return;
+        } else if (data.length > 1 && data.length <= 10) {
+          createCountriesList(data);
+          return;
+        } else if (data.length === 1) {
+          createCountriesList(data);
+          createCountryInfo(data);
+        }
+      })
       .catch(error => {
-        Notify.failure('Oops, there is no country with that name');
+        if (error.code === '404') {
+          Notify.failure('Oops, there is no country with that name');
+          return;
+        }
+        Notify.failure('Unexpected error');
       });
   }
 
-  function dataProcessing(data) {
-    if (data.length > 10) {
-      Notify.info('Too many matches found. Please enter a more specific name.');
-      return;
-    }
-    createCountriesList(data);
-  }
-
   function createCountriesList(data) {
-    const markupData = data
+    const markupCountries = data
       .map(({ flags: { svg }, name: { official } }) => {
         return `<li class="country-item"><img src="${svg}" alt="Flag of ${official}" width="100" height="50"/>
         <p class="country-name">${official}</p></li>`;
       })
       .join('');
+    countryList.insertAdjacentHTML('afterbegin', markupCountries);
+  }
+}
 
-    if (data.length === 1) {
-      const languages = Object.values(data[0].languages).join(', ');
-
-      const markupInfo = `<ul>
+function createCountryInfo(data) {
+  const languages = Object.values(data[0].languages).join(', ');
+  const markupInfo = `<ul>
       <li><span class="feature">Capital: </span>${data[0].capital}</li>
       <li><span class="feature">Population: </span>${data[0].population}</li>
       <li><span class="feature">Languages: </span>${languages}</li>
       </ul>`;
-
-      countryInfo.insertAdjacentHTML('afterbegin', markupInfo);
-    }
-    return countryList.insertAdjacentHTML('afterbegin', markupData);
-  }
+  countryInfo.insertAdjacentHTML('afterbegin', markupInfo);
 }
